@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" version="2.5" group="system" method="upgrade">
+    <name>plg_system_scsscompiler</name>
+    <firstDate>2023-04-21</firstDate>
+    <author>R2H BV</author>
+    <authorEmail>rick@r2h.nl</authorEmail>
+    <authorUrl>http://r2h.nl</authorUrl>
+    <copyright>copyright R2H BV 2023</copyright>
+    <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+    <version>1.0</version>
+    <creationDate>2023-04-21</creationDate>
+    <description>PLG_SYSTEM_SCSSCOMPILER_XML_DESCRIPTION</description>
+    <files>
+        <filename plugin="scsscompiler">scsscompiler.php</filename>
+        <folder>scssphp</folder>
+        <folder>language</folder>
+    </files>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field
+                    name="msg_ok"
+                    type="radio"
+                    class="btn-group"
+                    default="1"
+                    layout="joomla.form.field.radio.switcher"
+                    label="SCSS_COMPILER_MSGOK_LABEL"
+                    description="SCSS_COMPILER_MSGOK_DESC"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field
+					name="scssFiles"
+					type="subform"
+					label="SCSS_COMPILER_SCSSFILES"
+					min="1"
+					required="false"
+					multiple="true">
+					<form>
+                        <field
+                            name="scssFile"
+                            type="text"
+                            default=""
+                            description="SCSS_COMPILER_SCSSFOLDER_DESC"
+                            label="SCSS_COMPILER_SCSSFOLDER_LABEL"
+                        />
+                        <field
+                            name="cssFolder"
+                            type="text"
+                            default=""
+                            description="SCSS_COMPILER_CSSFOLDER_DESC"
+                            label="SCSS_COMPILER_CSSFOLDER_LABEL"
+                        />
+                        <field
+                            name="sourceMap"
+                            type="radio"
+                            class="btn-group"
+                            default="1"
+                            layout="joomla.form.field.radio.switcher"
+                            label="SCSS_COMPILER_MAP_LABEL"
+                            description="SCSS_COMPILER_MAP_DESC"
+                        >
+                            <option value="0">JNO</option>
+                            <option value="1">JYES</option>
+                        </field>
+					</form>
+				</field>
+            </fieldset>
+        </fields>
+    </config>
+    <scriptfile>install.php</scriptfile>
+</extension>
