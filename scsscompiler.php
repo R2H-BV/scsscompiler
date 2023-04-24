@@ -114,9 +114,7 @@ class plgSystemscssCompiler extends CMSPlugin {
                     'sourceRoot' => '/',
                 ]);
 
-                $stringScssCcontent = file_get_contents(($file->scssFile));
-
-                $result = $compiler->compileString($stringScssCcontent);
+                $result = $compiler->compileString("@import \"{$path_parts['basename']}\";");
 
                 file_put_contents($file->cssFolder . '/'. $path_parts['filename'] . '.css.map', $result->getSourceMap());
                 file_put_contents($file->cssFolder . '/'. $path_parts['filename'] . '.css', $result->getCss());

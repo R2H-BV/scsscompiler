@@ -12,7 +12,7 @@
     <description>PLG_SYSTEM_SCSSCOMPILER_XML_DESCRIPTION</description>
     <files>
         <filename plugin="scsscompiler">scsscompiler.php</filename>
-        <folder>scssphp</folder>
+        <folder>vendor</folder>
         <folder>language</folder>
     </files>
 
