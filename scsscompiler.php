@@ -56,15 +56,11 @@ class plgSystemscssCompiler extends CMSPlugin {
         if ($getCompile <> 1) {
             return;
         }
-        echo JPATH_ROOT;
-        $absolutePathFull       = URI::base(); // has trailing /
-        $relativePathSubfolder  = URI::base(true); // no trailing /
-        $serverPathFull         = str_replace('\\', '/', JPATH_ROOT) . '/'; // no trailing /
-        $msg_ok                 = $this->params->get('msg_ok', true);
-        $force_compile          = $this->params->get('force_compile', false);
-        $scss_compress          = $this->params->get('scss_compress', 'Expanded');
-        $source_map             = $this->params->get('source_map', true);
 
+        $serverRoot             = $_SERVER['DOCUMENT_ROOT'];
+        $serverPathFull         = str_replace('\\', '/', JPATH_ROOT); // no trailing /
+        $serverSourceRoot       = str_replace($serverRoot, '', $serverPathFull);
+        $source_map             = $this->params->get('source_map', true);
         $scssFiles              = $this->params->get('scssFiles', '');
 
         if (!class_exists('ScssPhp\ScssPhp\Compiler')) {
@@ -108,10 +104,10 @@ class plgSystemscssCompiler extends CMSPlugin {
                     'sourceMapFilename' => $path_parts['basename'],
 
                     // partial path (server root) removed (normalized) to create a relative url
-                    'sourceMapBasepath' => $serverPathFull,
+                    'sourceMapBasepath' => $serverRoot,
 
                     // (optional) prepended to 'source' field entries for relocating source files
-                    'sourceRoot' => '/',
+                    'sourceRoot' => $serverSourceRoot,
                 ]);
 
                 $result = $compiler->compileString("@import \"{$path_parts['basename']}\";");
