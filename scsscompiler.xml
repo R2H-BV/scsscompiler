@@ -20,21 +20,10 @@
         <fields name="params">
             <fieldset name="basic">
                 <field
-                    name="msg_ok"
-                    type="radio"
-                    class="btn-group"
-                    default="1"
-                    layout="joomla.form.field.radio.switcher"
-                    label="SCSS_COMPILER_MSGOK_LABEL"
-                    description="SCSS_COMPILER_MSGOK_DESC"
-                >
-                    <option value="0">JNO</option>
-                    <option value="1">JYES</option>
-                </field>
-                <field
 					name="scssFiles"
 					type="subform"
-					label="SCSS_COMPILER_SCSSFILES"
+					label="PLG_SYSTEM_SCSSCOMPILER_SCSSFILES"
+                    description="PLG_SYSTEM_SCSSCOMPILER_SCSSFILES_DESC"
 					min="1"
 					required="false"
 					multiple="true">
@@ -43,15 +32,15 @@
                             name="scssFile"
                             type="text"
                             default=""
-                            description="SCSS_COMPILER_SCSSFOLDER_DESC"
-                            label="SCSS_COMPILER_SCSSFOLDER_LABEL"
+                            description="PLG_SYSTEM_SCSSCOMPILER_SCSSFILE_DESC"
+                            label="PLG_SYSTEM_SCSSCOMPILER_SCSSFILE"
                         />
                         <field
                             name="cssFolder"
                             type="text"
                             default=""
-                            description="SCSS_COMPILER_CSSFOLDER_DESC"
-                            label="SCSS_COMPILER_CSSFOLDER_LABEL"
+                            description="PLG_SYSTEM_SCSSCOMPILER_CSSFOLDER_DESC"
+                            label="PLG_SYSTEM_SCSSCOMPILER_CSSFOLDER"
                         />
                         <field
                             name="sourceMap"
@@ -59,8 +48,32 @@
                             class="btn-group"
                             default="1"
                             layout="joomla.form.field.radio.switcher"
-                            label="SCSS_COMPILER_MAP_LABEL"
-                            description="SCSS_COMPILER_MAP_DESC"
+                            label="PLG_SYSTEM_SCSSCOMPILER_MAP"
+                            description="PLG_SYSTEM_SCSSCOMPILER_MAP_DESC"
+                        >
+                            <option value="0">JNO</option>
+                            <option value="1">JYES</option>
+                        </field>
+                        <field
+                            name="minified"
+                            type="radio"
+                            class="btn-group"
+                            default="1"
+                            layout="joomla.form.field.radio.switcher"
+                            label="PLG_SYSTEM_SCSSCOMPILER_MINIFIED"
+                            description="PLG_SYSTEM_SCSSCOMPILER_MINIFIED_DESC"
+                        >
+                            <option value="0">JNO</option>
+                            <option value="1">JYES</option>
+                        </field>
+                        <field
+                            name="gzip"
+                            type="radio"
+                            class="btn-group"
+                            default="1"
+                            layout="joomla.form.field.radio.switcher"
+                            label="PLG_SYSTEM_SCSSCOMPILER_GZIP"
+                            description="PLG_SYSTEM_SCSSCOMPILER_GZIP_DESC"
                         >
                             <option value="0">JNO</option>
                             <option value="1">JYES</option>
