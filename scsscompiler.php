@@ -107,7 +107,7 @@ class plgSystemscssCompiler extends CMSPlugin {
             '. $this->SuccessMessage . '
             </div>
             <form method="dialog">
-                <button>OK</button>
+            <button class="btn btn-primary">' . Text::_('JCLOSE') . '</button>
             </form>
             </dialog>';
         }
@@ -126,6 +126,10 @@ class plgSystemscssCompiler extends CMSPlugin {
         $serverRoot             = $_SERVER['DOCUMENT_ROOT'];
         $serverPathFull         = str_replace('\\', '/', JPATH_ROOT); // no trailing /
         $serverSourceRoot       = str_replace($serverRoot, '', $serverPathFull);
+
+        if (empty($serverSourceRoot)) {
+            $serverSourceRoot = '/';
+        }
 
         $compiler               = new Compiler();
 
