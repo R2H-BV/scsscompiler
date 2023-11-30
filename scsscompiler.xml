@@ -7,7 +7,7 @@
     <authorUrl>http://r2h.nl</authorUrl>
     <copyright>copyright R2H BV 2023</copyright>
     <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <creationDate>2023-11-30</creationDate>
     <description>PLG_SYSTEM_SCSSCOMPILER_XML_DESCRIPTION</description>
     <files>
