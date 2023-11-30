@@ -83,5 +83,4 @@
             </fieldset>
         </fields>
     </config>
-    <scriptfile>install.php</scriptfile>
 </extension>
