@@ -141,7 +141,7 @@ final class Scsscompiler extends CMSPlugin
                 aria-labelledby="successModalLabel"
                 aria-hidden="true"
                 style="display: none;">
-                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                <div class="modal-dialog modal-dialog-scrollable modal-lg">
                 <div class="modal-content">
                     <!-- Header with title and close button -->
                     <div class="modal-header">
