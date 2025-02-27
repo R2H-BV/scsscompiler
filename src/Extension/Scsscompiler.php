@@ -11,9 +11,9 @@
 namespace Joomla\Plugin\System\Scsscompiler\Extension;
 
 use ScssPhp\ScssPhp\Compiler;
-use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -54,6 +54,8 @@ final class Scsscompiler extends CMSPlugin
             return;
         }
 
+        HTMLHelper::_('bootstrap.modal', '.selector', []);
+
         /* INLINE CSS */
         /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
         $wa = $this->app->getDocument()->getWebAssetManager();
@@ -73,6 +75,40 @@ final class Scsscompiler extends CMSPlugin
         CSS;
         $wa->addInlineStyle($style, ['name' => 'scsscompiler']);
 
+        $script = <<<SCRIPT
+            document.addEventListener("DOMContentLoaded", function() {
+            var modalElement = document.getElementById('successModal');
+            var modalInstance = new bootstrap.Modal(modalElement, {
+                backdrop: true,  // Allows closing when clicking outside
+                keyboard: true   // Allows closing with the ESC key
+            });
+
+            // Open the modal immediately
+            modalInstance.show();
+
+            // When closing the modal (e.g., clicking the close button), remove focus from any element inside it
+            modalElement.addEventListener('hide.bs.modal', function() {
+                if(document.activeElement && modalElement.contains(document.activeElement)){
+                document.activeElement.blur();
+                }
+            });
+
+            // Optionally, after the modal is hidden, move focus to a safe element (e.g., the element that triggered it)
+            modalElement.addEventListener('hidden.bs.modal', function () {
+                var trigger = document.getElementById('triggerButton'); // change to your trigger element's ID if available
+                if (trigger) {
+                trigger.focus();
+                }
+            });
+
+            // Automatically close the modal after 3 seconds
+            setTimeout(function(){
+                modalInstance.hide();
+            }, 3000000);
+            });
+        SCRIPT;
+        $wa->addInlineScript($script, ['name' => 'scsscompiler']);
+
         // Check for GET parameter
         $input = $this->app->input;
         $getCompile = $input->get('compile', '', 'string');
@@ -87,8 +123,6 @@ final class Scsscompiler extends CMSPlugin
         if (!class_exists('ScssPhp\ScssPhp\Compiler')) {
             require dirname(__DIR__, 1) . '/vendor/autoload.php';
         }
-
-
 
         foreach ($scssFiles as $file) {
             if (!isset($file->scssFile) || empty($file->scssFile) || !is_file($file->scssFile)) {
@@ -105,14 +139,27 @@ final class Scsscompiler extends CMSPlugin
 
         if ($this->SuccessMessage) {
             echo '
-            <dialog class="scss-dialog mw-75" open>
-            <div class="alert alert-success" role="alert">
-            ' . $this->SuccessMessage . '
-            </div>
-            <form method="dialog">
-            <button class="btn btn-primary">' . Text::_('JCLOSE') . '</button>
-            </form>
-            </dialog>';
+            <div
+                class="modal fade"
+                id="successModal" tabindex="-1"
+                aria-labelledby="successModalLabel"
+                aria-hidden="true"
+                style="display: none;">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                <div class="modal-content">
+                    <!-- Header with title and close button -->
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">' . Text::_('JCLOSE') . '</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <!-- Modal body with success alert -->
+                    <div class="modal-body">
+                        ' . $this->SuccessMessage . '
+
+                    </div>
+                </div>
+                </div>
+            </div>';
         }
     }
 
