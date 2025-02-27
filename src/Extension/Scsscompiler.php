@@ -1,31 +1,32 @@
 <?php
 
 /**
- * @package    scssCompiler
- * @subpackage System.scssCompiler
- * @author     R2H BV
- * @license    GNU/GPL
+ * @package     Joomla.Plugin
+ * @subpackage  Content.loadmodule
+ *
+ * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+namespace Joomla\Plugin\System\Scsscompiler\Extension;
+
 use ScssPhp\ScssPhp\Compiler;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Log\Log;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * System Plugin.
+ * Plugin to compile SCSS to CSS
  *
  * @package    scssCompiler
  * @subpackage Plugin
  */
-class plgSystemscssCompiler extends CMSPlugin {
-
+final class Scsscompiler extends CMSPlugin
+{
     /**
      * Application object.
      *
@@ -42,9 +43,11 @@ class plgSystemscssCompiler extends CMSPlugin {
      */
     protected $autoloadLanguage = true;
 
+    // Set the variable to hold the messages
     protected $SuccessMessage = '';
 
-    public function onBeforeRender() {
+    public function onBeforeRender()
+    {
 
         // Check if client is administrator or view is module.
         if (!$this->app->isClient('site')) {
@@ -79,32 +82,32 @@ class plgSystemscssCompiler extends CMSPlugin {
             return;
         }
 
-        $scssFiles              = $this->params->get('scssFiles', '');
+        $scssFiles = $this->params->get('scssFiles', '');
 
         if (!class_exists('ScssPhp\ScssPhp\Compiler')) {
-            require __DIR__ . '/vendor/autoload.php';
+            require dirname(__DIR__, 1) . '/vendor/autoload.php';
         }
 
-        foreach ($scssFiles as $file) {
 
-            if (!isset($file->scssFile) || empty($file->scssFile) || !File::exists($file->scssFile)) {
+
+        foreach ($scssFiles as $file) {
+            if (!isset($file->scssFile) || empty($file->scssFile) || !is_file($file->scssFile)) {
                 return;
             }
 
-            if (!isset($file->cssFolder) || empty($file->cssFolder) || !Folder::exists($file->cssFolder)) {
+            if (!isset($file->cssFolder) || empty($file->cssFolder) || !is_dir($file->cssFolder)) {
                 return;
             }
 
             // Compile the CSS
             $this->compile($file->scssFile, $file->cssFolder, $file->sourceMap, $file->minified, $file->gzip);
-
         }
 
         if ($this->SuccessMessage) {
             echo '
             <dialog class="scss-dialog mw-75" open>
-            <div class="alert alert-warning" role="alert">
-            '. $this->SuccessMessage . '
+            <div class="alert alert-success" role="alert">
+            ' . $this->SuccessMessage . '
             </div>
             <form method="dialog">
             <button class="btn btn-primary">' . Text::_('JCLOSE') . '</button>
@@ -114,15 +117,15 @@ class plgSystemscssCompiler extends CMSPlugin {
     }
 
     /**
-	 * Compile the file to the given location with a mode
-	 * @param 	String 	$inputFile
-	 * @param 	String 	$outputDir
-     * @param 	Integer sourceMap
-	 * @param 	Integer $mode
-	 * @return 	bool
-	 */
-	private function compile(string $inputFile, string $outputDir, bool $sourceMap, bool $mode, bool $gzip): bool
-	{
+     * Compile the file to the given location with a mode
+     * @param    String    $inputFile
+     * @param    String    $outputDir
+     * @param    Integer   sourceMap
+     * @param    Integer   $mode
+     * @return   bool
+     */
+    private function compile(string $inputFile, string $outputDir, bool $sourceMap, bool $mode, bool $gzip): bool
+    {
         $serverRoot             = $_SERVER['DOCUMENT_ROOT'];
         $serverPathFull         = str_replace('\\', '/', JPATH_ROOT); // no trailing /
         $serverSourceRoot       = str_replace($serverRoot, '', $serverPathFull);
@@ -131,7 +134,7 @@ class plgSystemscssCompiler extends CMSPlugin {
             $serverSourceRoot = '/';
         }
 
-        $compiler               = new Compiler();
+        $compiler = new Compiler();
 
         try {
             $path_parts = pathinfo($inputFile);
@@ -167,29 +170,28 @@ class plgSystemscssCompiler extends CMSPlugin {
 
             $result = $compiler->compileString("@import \"{$path_parts['basename']}\";");
 
-            file_put_contents($outputDir . '/'. $path_parts['filename'] . $extension, $result->getCss());
+            file_put_contents($outputDir . '/' . $path_parts['filename'] . $extension, $result->getCss());
 
             $textMsg = Text::_('PLG_SYSTEM_SCSSCOMPILER_MSG');
 
-            $this->SuccessMessage .= $textMsg . $outputDir . '/'. $path_parts['filename'] . $extension . '<br>';
+            $this->SuccessMessage .= $textMsg . $outputDir . '/' . $path_parts['filename'] . $extension . '<br>';
 
             if ($sourceMap) {
-                file_put_contents($outputDir . '/'. $path_parts['filename'] . $extension .'.map', $result->getSourceMap());
-                $this->SuccessMessage .= $textMsg . $outputDir . '/'. $path_parts['filename'] . $extension . '.map<br>';
+                file_put_contents($outputDir . '/' . $path_parts['filename'] . $extension . '.map', $result->getSourceMap());
+                $this->SuccessMessage .= $textMsg . $outputDir . '/' . $path_parts['filename'] . $extension . '.map<br>';
             }
 
             if ($gzip) {
-                $gzipFile =  $this->gzcompressfile($outputDir . '/'. $path_parts['filename'] . $extension, $level = 9);
+                $gzipFile =  $this->gzcompressfile($outputDir . '/' . $path_parts['filename'] . $extension, $level = 9);
 
                 $this->SuccessMessage .= $textMsg . $gzipFile . '<br>';
             }
-
         } catch (\Exception $e) {
             $this->SuccessMessage .= Text::_('PLG_SYSTEM_SCSSCOMPILER_MSG_ERROR') . $e->getMessage() . '<br>';
         }
 
         return true;
-	}
+    }
 
     /**
      * Compress a file using gzip
@@ -210,8 +212,8 @@ class plgSystemscssCompiler extends CMSPlugin {
         }
 
         // Open output file
-        $gzFilename = $inFilename.".gz";
-        $mode = "wb".$level;
+        $gzFilename = $inFilename . ".gz";
+        $mode = "wb" . $level;
         $gzFile = gzopen($gzFilename, $mode);
         if ($gzFile === false) {
             fclose($inFile);

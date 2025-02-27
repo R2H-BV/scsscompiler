@@ -1,22 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
-<extension type="plugin" version="2.5" group="system" method="upgrade">
-    <name>plg_system_scsscompiler</name>
-    <firstDate>2023-04-21</firstDate>
-    <author>R2H BV</author>
-    <authorEmail>rick@r2h.nl</authorEmail>
-    <authorUrl>http://r2h.nl</authorUrl>
-    <copyright>copyright R2H BV 2023</copyright>
-    <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-    <version>1.1.0</version>
-    <creationDate>2023-11-30</creationDate>
-    <description>PLG_SYSTEM_SCSSCOMPILER_XML_DESCRIPTION</description>
-    <files>
-        <filename plugin="scsscompiler">scsscompiler.php</filename>
-        <folder>vendor</folder>
-        <folder>language</folder>
-    </files>
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="4.3" type="plugin" group="system" method="upgrade">
+	<name>plg_system_scsscompiler</name>
+	<description>PLG_SYSTEM_SCSSCOMPILER_XML_DESCRIPTION</description>
 
-    <config>
+	<author>Rick Spaan - R2H BV</author>
+	<copyright>(C) 2024 R2H BV. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>rick@r2h.nl</authorEmail>
+	<authorUrl>https://r2h.nl</authorUrl>
+
+	<creationDate>2025-02-27</creationDate>
+	<version>2.0.0</version>
+
+	<namespace path="src">Joomla\Plugin\System\Scsscompiler</namespace>
+
+	<files>
+		<folder plugin="scsscompiler">services</folder>
+		<folder>src</folder>
+		<folder>language</folder>
+	</files>
+
+	<languages>
+		<language tag="en-GB">language/en-GB/plg_system_scsscompiler.ini</language>
+		<language tag="en-GB">language/en-GB/plg_system_scsscompiler.sys.ini</language>
+	</languages>
+
+	<media destination="plg_system_scsscompiler" folder="media">
+		<folder>css</folder>
+		<folder>js</folder>
+	</media>
+
+	<config>
+		<inlinehelp button="show"/>
+
         <fields name="params">
             <fieldset name="basic">
                 <field
@@ -82,5 +98,5 @@
 				</field>
             </fieldset>
         </fields>
-    </config>
+	</config>
 </extension>
