@@ -25,11 +25,6 @@
 		<language tag="en-GB">language/en-GB/plg_system_scsscompiler.sys.ini</language>
 	</languages>
 
-	<media destination="plg_system_scsscompiler" folder="media">
-		<folder>css</folder>
-		<folder>js</folder>
-	</media>
-
 	<config>
 		<inlinehelp button="show"/>
 
