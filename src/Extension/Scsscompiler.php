@@ -54,28 +54,28 @@ final class Scsscompiler extends CMSPlugin
             return;
         }
 
-        HTMLHelper::_('bootstrap.modal', '.selector', []);
+        // Check for GET parameter
+        $input = $this->app->input;
+        $getCompile = $input->get('compile', '', 'string');
 
-        /* INLINE CSS */
-        /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
-        $wa = $this->app->getDocument()->getWebAssetManager();
-
-        $style = <<<CSS
-        dialog.scss-dialog {
-            margin: 2rem auto;
-            border: none !important;
-            border-radius: 1rem;
-            box-shadow: 0 0 #0000, 0 0 #0000, 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            padding: 1.5rem;
-            width: 800px;
-            max-width: 95%;
-            z-index: 10000;
-            overflow-wrap: break-word;
+        // Return if URL not contains: ?compile=1
+        if ($getCompile <> 1) {
+            return;
         }
-        CSS;
-        $wa->addInlineStyle($style, ['name' => 'scsscompiler']);
 
-        $script = <<<SCRIPT
+        // Load the SCSS files
+        $scssFiles = $this->params->get('scssFiles', '');
+
+        if ($this->params->get('showmodal', 1)) {
+            $modalTimeout = $this->params->get('modal_timeout', 3000);
+
+            HTMLHelper::_('bootstrap.modal', '.selector', []);
+
+            /* INLINE CSS */
+            /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+            $wa = $this->app->getDocument()->getWebAssetManager();
+
+            $script = <<<SCRIPT
             document.addEventListener("DOMContentLoaded", function() {
             var modalElement = document.getElementById('successModal');
             var modalInstance = new bootstrap.Modal(modalElement, {
@@ -104,21 +104,12 @@ final class Scsscompiler extends CMSPlugin
             // Automatically close the modal after 3 seconds
             setTimeout(function(){
                 modalInstance.hide();
-            }, 3000000);
+            }, $modalTimeout);
             });
-        SCRIPT;
-        $wa->addInlineScript($script, ['name' => 'scsscompiler']);
+            SCRIPT;
 
-        // Check for GET parameter
-        $input = $this->app->input;
-        $getCompile = $input->get('compile', '', 'string');
-
-        // Return if URL not contains: ?compile=1
-        if ($getCompile <> 1) {
-            return;
+            $wa->addInlineScript($script, ['name' => 'scsscompiler']);
         }
-
-        $scssFiles = $this->params->get('scssFiles', '');
 
         if (!class_exists('ScssPhp\ScssPhp\Compiler')) {
             require dirname(__DIR__, 1) . '/vendor/autoload.php';
@@ -133,11 +124,16 @@ final class Scsscompiler extends CMSPlugin
                 return;
             }
 
-            // Compile the CSS
-            $this->compile($file->scssFile, $file->cssFolder, $file->sourceMap, $file->minified, $file->gzip);
+            // Compile the default CSS
+            $this->compile($file->scssFile, $file->cssFolder, $file->sourceMap, 0, $file->gzip);
+
+            // Compile the Minified CSS
+            if ($file->minified) {
+                $this->compile($file->scssFile, $file->cssFolder, $file->sourceMap, $file->minified, $file->gzip);
+            }
         }
 
-        if ($this->SuccessMessage) {
+        if ($this->SuccessMessage && $this->params->get('showmodal', 1)) {
             echo '
             <div
                 class="modal fade"
@@ -234,7 +230,7 @@ final class Scsscompiler extends CMSPlugin
                 $this->SuccessMessage .= $textMsg . $gzipFile . '<br>';
             }
         } catch (\Exception $e) {
-            $this->SuccessMessage .= Text::_('PLG_SYSTEM_SCSSCOMPILER_MSG_ERROR') . $e->getMessage() . '<br>';
+            $this->SuccessMessage .= Text::_('PLG_SYSTEM_SCSSCOMPILER_MSG_ERROR') . '<strong>' . $inputFile . '</strong>' . ' (' . $e->getMessage() . ')<br>';
         }
 
         return true;
