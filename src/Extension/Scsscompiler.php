@@ -179,11 +179,57 @@ final class Scsscompiler extends CMSPlugin
             }
 
             // Compile the default CSS
-            $this->compile($file->scssFile, $file->cssFolder, $file->sourceMap, 0, $file->gzip);
+            $this->compile($file->scssFile, $file->cssFolder, $this->params->get('sourceMap', 1), 0, $this->params->get('gzip', 1));
 
-            // Compile the Minified CSS
-            if ($file->minified) {
-                $this->compile($file->scssFile, $file->cssFolder, $file->sourceMap, $file->minified, $file->gzip);
+            $path_parts = pathinfo($file->scssFile);
+
+            // Get the path to the output folder
+            $outputFile = JPATH_ROOT . '/' . $file->cssFolder . '/' . $path_parts['filename'];
+
+            // Delete files isn config is set to 0
+            if (!$this->params->get('sourceMap', 1) && file_exists($outputFile . '.css.map')) {
+                unlink($outputFile . '.css.map');
+                $this->SuccessMessage .= '🗑' . $outputFile . '.css.map<br>';
+            }
+
+            // Delete files isn config is set to 0
+            if (!$this->params->get('gzip', 1) && file_exists($outputFile . '.css.gz')) {
+                unlink($outputFile . '.css.gz');
+                $this->SuccessMessage .= '🗑' . $outputFile . '.css.gz<br>';
+            }
+
+            // Compile the minified CSS
+            if ($this->params->get('minified', 1)) {
+                $this->compile($file->scssFile, $file->cssFolder, $this->params->get('sourceMap', 1), 1, $this->params->get('gzip', 1));
+
+                // Delete files isn config is set to 0
+                if (!$this->params->get('sourceMap', 1) && file_exists($outputFile . '.min.css.map')) {
+                    unlink($outputFile . '.min.css.map');
+                    $this->SuccessMessage .= '🗑' . $outputFile . '.min.css.map<br>';
+                }
+                // Delete files isn config is set to 0
+                if (!$this->params->get('gzip', 1) && file_exists($outputFile . '.min.css.gz')) {
+                    unlink($outputFile . '.min.css.gz');
+                    $this->SuccessMessage .= '🗑' . $outputFile . '.min.css.gz<br>';
+                }
+            } else {
+                // Delete files isn config is set to 0
+                if (file_exists($outputFile . '.min.css')) {
+                    unlink($outputFile . '.min.css');
+                    $this->SuccessMessage .= '🗑' . $outputFile . '.min.css<br>';
+                }
+
+                // Delete files isn config is set to 0
+                if (file_exists($outputFile . '.min.css.map')) {
+                    unlink($outputFile . '.min.css.map');
+                    $this->SuccessMessage .= '🗑' . $outputFile . '.min.css.map<br>';
+                }
+
+                // Delete files isn config is set to 0
+                if (file_exists($outputFile . '.min.css.gz')) {
+                    unlink($outputFile . '.min.css.gz');
+                    $this->SuccessMessage .= '🗑' . $outputFile . '.min.css.gz<br>';
+                }
             }
         }
 
@@ -196,18 +242,17 @@ final class Scsscompiler extends CMSPlugin
                 aria-hidden="true"
                 style="display: none;">
                 <div class="modal-dialog modal-dialog-scrollable modal-lg">
-                <div class="modal-content">
-                    <!-- Header with title and close button -->
-                    <div class="modal-header">
-                    <h5 class="modal-title" id="successModalLabel">' . Text::_('JCLOSE') . '</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-content">
+                        <!-- Header with title and close button -->
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="successModalLabel">' . Text::_('JCLOSE') . '</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <!-- Modal body with success alert -->
+                        <div class="modal-body">
+                            ' . $this->SuccessMessage . '
+                        </div>
                     </div>
-                    <!-- Modal body with success alert -->
-                    <div class="modal-body">
-                        ' . $this->SuccessMessage . '
-
-                    </div>
-                </div>
                 </div>
             </div>';
         }
@@ -234,15 +279,13 @@ final class Scsscompiler extends CMSPlugin
         // Combineer protocol en host tot de server root
         $serverSourceRoot = $protocol . '://' . $hostname . '/';
 
-        if (empty($serverSourceRoot)) {
-            $serverSourceRoot = '/';
-        }
-
         $compiler = new Compiler();
 
         try {
             $path_parts = pathinfo($inputFile);
-            $extension = '.css';
+
+            // Get the path to the output folder
+            $outputDir = JPATH_ROOT . '/' . $outputDir . '/';
 
             $compiler->setImportPaths($path_parts['dirname']);
 
@@ -252,6 +295,7 @@ final class Scsscompiler extends CMSPlugin
                 $extension = '.min.css';
             } else {
                 $compiler->setOutputStyle(\ScssPhp\ScssPhp\OutputStyle::EXPANDED);
+                $extension = '.css';
             }
 
             if ($sourceMap) {
@@ -272,6 +316,8 @@ final class Scsscompiler extends CMSPlugin
                     // (optional) prepended to 'source' field entries for relocating source files
                     'sourceRoot' => $serverSourceRoot,
                 ]);
+            } else {
+                // Remove source map
             }
 
             $result = $compiler->compileString("@import \"{$path_parts['basename']}\";");

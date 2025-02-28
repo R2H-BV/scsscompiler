@@ -31,6 +31,42 @@
         <fields name="params">
             <fieldset name="basic">
                 <field
+                    name="minified"
+                    type="radio"
+                    class="btn-group"
+                    default="1"
+                    layout="joomla.form.field.radio.switcher"
+                    label="PLG_SYSTEM_SCSSCOMPILER_MINIFIED"
+                    description="PLG_SYSTEM_SCSSCOMPILER_MINIFIED_DESC"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field
+                    name="sourceMap"
+                    type="radio"
+                    class="btn-group"
+                    default="1"
+                    layout="joomla.form.field.radio.switcher"
+                    label="PLG_SYSTEM_SCSSCOMPILER_MAP"
+                    description="PLG_SYSTEM_SCSSCOMPILER_MAP_DESC"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field
+                    name="gzip"
+                    type="radio"
+                    class="btn-group"
+                    default="1"
+                    layout="joomla.form.field.radio.switcher"
+                    label="PLG_SYSTEM_SCSSCOMPILER_GZIP"
+                    description="PLG_SYSTEM_SCSSCOMPILER_GZIP_DESC"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field
                     name="showmodal"
                     type="radio"
                     label="PLG_SYSTEM_SCSSCOMPILER_MSG_SHOWMODAL"
@@ -74,42 +110,6 @@
                             description="PLG_SYSTEM_SCSSCOMPILER_CSSFOLDER_DESC"
                             label="PLG_SYSTEM_SCSSCOMPILER_CSSFOLDER"
                         />
-                        <field
-                            name="sourceMap"
-                            type="radio"
-                            class="btn-group"
-                            default="1"
-                            layout="joomla.form.field.radio.switcher"
-                            label="PLG_SYSTEM_SCSSCOMPILER_MAP"
-                            description="PLG_SYSTEM_SCSSCOMPILER_MAP_DESC"
-                        >
-                            <option value="0">JNO</option>
-                            <option value="1">JYES</option>
-                        </field>
-                        <field
-                            name="minified"
-                            type="radio"
-                            class="btn-group"
-                            default="1"
-                            layout="joomla.form.field.radio.switcher"
-                            label="PLG_SYSTEM_SCSSCOMPILER_MINIFIED"
-                            description="PLG_SYSTEM_SCSSCOMPILER_MINIFIED_DESC"
-                        >
-                            <option value="0">JNO</option>
-                            <option value="1">JYES</option>
-                        </field>
-                        <field
-                            name="gzip"
-                            type="radio"
-                            class="btn-group"
-                            default="1"
-                            layout="joomla.form.field.radio.switcher"
-                            label="PLG_SYSTEM_SCSSCOMPILER_GZIP"
-                            description="PLG_SYSTEM_SCSSCOMPILER_GZIP_DESC"
-                        >
-                            <option value="0">JNO</option>
-                            <option value="1">JYES</option>
-                        </field>
 					</form>
 				</field>
             </fieldset>
