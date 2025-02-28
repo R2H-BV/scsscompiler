@@ -95,7 +95,8 @@ final class Scsscompiler extends CMSPlugin
 
             // Optionally, after the modal is hidden, move focus to a safe element (e.g., the element that triggered it)
             modalElement.addEventListener('hidden.bs.modal', function () {
-                var trigger = document.getElementById('triggerButton'); // change to your trigger element's ID if available
+                // change to your trigger element's ID if available
+                var trigger = document.getElementById('triggerButton');
                 if (trigger) {
                 trigger.focus();
                 }
@@ -204,10 +205,12 @@ final class Scsscompiler extends CMSPlugin
                 $compiler->setSourceMap(Compiler::SOURCE_MAP_FILE);
 
                 $compiler->setSourceMapOptions([
-                    // relative or full url to the above .map file (Added text to the CSS file at the end as: /*# sourceMappingURL=template.css.map */)
+                    // relative or full url to the above .map file
+                    // (Added text to the CSS file at the end as: /*# sourceMappingURL=template.css.map */)
                     'sourceMapURL' => $path_parts['filename'] . $extension . '.map',
 
-                    // (optional) relative or full url to the .css (Added text to the source map as: "file":"template.scss")
+                    // (optional) relative or full url to the .css
+                    // (Added text to the source map as: "file":"template.scss")
                     'sourceMapFilename' => $path_parts['basename'],
 
                     // partial path (server root) removed (normalized) to create a relative url
@@ -227,8 +230,10 @@ final class Scsscompiler extends CMSPlugin
             $this->SuccessMessage .= $textMsg . $outputDir . '/' . $path_parts['filename'] . $extension . '<br>';
 
             if ($sourceMap) {
-                file_put_contents($outputDir . '/' . $path_parts['filename'] . $extension . '.map', $result->getSourceMap());
-                $this->SuccessMessage .= $textMsg . $outputDir . '/' . $path_parts['filename'] . $extension . '.map<br>';
+                file_put_contents($outputDir . '/'
+                    . $path_parts['filename'] . $extension . '.map', $result->getSourceMap());
+                $this->SuccessMessage .= $textMsg . $outputDir
+                    . '/' . $path_parts['filename'] . $extension . '.map<br>';
             }
 
             if ($gzip) {
@@ -237,7 +242,8 @@ final class Scsscompiler extends CMSPlugin
                 $this->SuccessMessage .= $textMsg . $gzipFile . '<br>';
             }
         } catch (\Exception $e) {
-            $this->SuccessMessage .= Text::_('PLG_SYSTEM_SCSSCOMPILER_MSG_ERROR') . '<strong>' . $inputFile . '</strong>' . ' (' . $e->getMessage() . ')<br>';
+            $this->SuccessMessage .= Text::_('PLG_SYSTEM_SCSSCOMPILER_MSG_ERROR')
+                . '<strong>' . $inputFile . '</strong>' . ' (' . $e->getMessage() . ')<br>';
         }
 
         return true;
