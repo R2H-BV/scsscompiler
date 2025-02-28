@@ -46,6 +46,11 @@ final class Scsscompiler extends CMSPlugin
     // Set the variable to hold the messages
     protected $SuccessMessage = '';
 
+    /**
+     * onBeforeRender event
+     *
+     * @return  void
+     */
     public function onBeforeRender()
     {
 
@@ -232,9 +237,33 @@ final class Scsscompiler extends CMSPlugin
                 }
             }
         }
+    }
+
+    /**
+     * onAfterRender event
+     *
+     * @return  void
+     */
+    public function onAfterRender()
+    {
+        // Check if client is administrator or view is module.
+        if (!$this->app->isClient('site')) {
+            return;
+        }
+
+        // Check for GET parameter
+        $input = $this->app->input;
+        $getCompile = $input->get('compile', '', 'string');
+
+        // Return if URL not contains: ?compile=1
+        if ($getCompile <> 1) {
+            return;
+        }
+
+        $body = $this->app->getBody();
 
         if ($this->SuccessMessage && $this->params->get('showmodal', 1)) {
-            echo '
+            $messageContainer = '
             <div
                 class="modal fade"
                 id="successModal" tabindex="-1"
@@ -256,6 +285,36 @@ final class Scsscompiler extends CMSPlugin
                 </div>
             </div>';
         }
+
+        // Insert the extra HTML before the closing </body> tag
+        $body = str_replace('</body>', $messageContainer . '</body>', $body);
+
+        // Set the modified HTML back to the application
+        $this->app->setBody($body);
+    }
+
+    /**
+     * onContentPrepare event
+     *
+     * @param   string   $context   The context of the content being passed to the plugin.
+     * @param   object   &$article  The article object. Note $article->text contains the body content.
+     * @param   mixed    &$params   The article params.
+     * @param   int      $limitstart The 'page' number (used for pagination).
+     *
+     * @return  void
+     */
+    public function onContentPrepare($context, &$article, &$params, $limitstart = 0)
+    {
+        // Check if the article has text property
+        if (empty($article->text)) {
+            return;
+        }
+
+        // Define additional content you want to append
+        $extraContent = '<p><strong>Note:</strong> This extra content was added by the ExtendBody plugin.</p>';
+
+        // Append the extra content to the article body
+        $article->text .= $extraContent;
     }
 
     /**
