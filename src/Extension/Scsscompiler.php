@@ -170,8 +170,15 @@ final class Scsscompiler extends CMSPlugin
     private function compile(string $inputFile, string $outputDir, bool $sourceMap, bool $mode, bool $gzip): bool
     {
         $serverRoot             = $_SERVER['DOCUMENT_ROOT'];
-        $serverPathFull         = str_replace('\\', '/', JPATH_ROOT); // no trailing /
-        $serverSourceRoot       = str_replace($serverRoot, '', $serverPathFull);
+
+        // Bepaal het protocol
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+
+        // Haal de host op (bijvoorbeeld "localhost")
+        $hostname = $_SERVER['HTTP_HOST'];
+
+        // Combineer protocol en host tot de server root
+        $serverSourceRoot = $protocol . '://' . $hostname . '/';
 
         if (empty($serverSourceRoot)) {
             $serverSourceRoot = '/';
