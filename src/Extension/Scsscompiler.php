@@ -294,30 +294,6 @@ final class Scsscompiler extends CMSPlugin
     }
 
     /**
-     * onContentPrepare event
-     *
-     * @param   string   $context   The context of the content being passed to the plugin.
-     * @param   object   &$article  The article object. Note $article->text contains the body content.
-     * @param   mixed    &$params   The article params.
-     * @param   int      $limitstart The 'page' number (used for pagination).
-     *
-     * @return  void
-     */
-    public function onContentPrepare($context, &$article, &$params, $limitstart = 0)
-    {
-        // Check if the article has text property
-        if (empty($article->text)) {
-            return;
-        }
-
-        // Define additional content you want to append
-        $extraContent = '<p><strong>Note:</strong> This extra content was added by the ExtendBody plugin.</p>';
-
-        // Append the extra content to the article body
-        $article->text .= $extraContent;
-    }
-
-    /**
      * Compile the file to the given location with a mode
      * @param    String    $inputFile
      * @param    String    $outputDir
