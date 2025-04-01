@@ -109,8 +109,6 @@ final class Scsscompiler extends CMSPlugin
                 // Append the button to the body
                 document.body.appendChild(button);
             })();
-
-
         });
         SCRIPT;
 
@@ -175,8 +173,16 @@ final class Scsscompiler extends CMSPlugin
         }
 
         foreach ($scssFiles as $file) {
+            if (!is_file($file->scssFile)) {
+                $this->SuccessMessage .= Text::sprintf('PLG_SYSTEM_SCSSCOMPILER_MSG_FILE_ERROR', $file->scssFile);
+            }
+
             if (!isset($file->scssFile) || empty($file->scssFile) || !is_file($file->scssFile)) {
                 return;
+            }
+
+            if (!is_dir($file->cssFolder)) {
+                $this->SuccessMessage .= Text::sprintf('PLG_SYSTEM_SCSSCOMPILER_MSG_FOLDER_ERROR', $file->cssFolder);
             }
 
             if (!isset($file->cssFolder) || empty($file->cssFolder) || !is_dir($file->cssFolder)) {
@@ -194,13 +200,13 @@ final class Scsscompiler extends CMSPlugin
             // Delete files isn config is set to 0
             if (!$this->params->get('sourceMap', 1) && file_exists($outputFile . '.css.map')) {
                 unlink($outputFile . '.css.map');
-                $this->SuccessMessage .= '🗑' . $outputFile . '.css.map<br>';
+                $this->SuccessMessage .= Text::sprintf('PLG_SYSTEM_SCSSCOMPILER_MSG_TRASH', $outputFile . '.css.map');
             }
 
             // Delete files isn config is set to 0
             if (!$this->params->get('gzip', 1) && file_exists($outputFile . '.css.gz')) {
                 unlink($outputFile . '.css.gz');
-                $this->SuccessMessage .= '🗑' . $outputFile . '.css.gz<br>';
+                $this->SuccessMessage .= Text::sprintf('PLG_SYSTEM_SCSSCOMPILER_MSG_TRASH', $outputFile . '.css.gz');
             }
 
             // Compile the minified CSS
@@ -210,30 +216,30 @@ final class Scsscompiler extends CMSPlugin
                 // Delete files isn config is set to 0
                 if (!$this->params->get('sourceMap', 1) && file_exists($outputFile . '.min.css.map')) {
                     unlink($outputFile . '.min.css.map');
-                    $this->SuccessMessage .= '🗑' . $outputFile . '.min.css.map<br>';
+                    $this->SuccessMessage .= Text::sprintf('PLG_SYSTEM_SCSSCOMPILER_MSG_TRASH', $outputFile . '.min.css.map');
                 }
                 // Delete files isn config is set to 0
                 if (!$this->params->get('gzip', 1) && file_exists($outputFile . '.min.css.gz')) {
                     unlink($outputFile . '.min.css.gz');
-                    $this->SuccessMessage .= '🗑' . $outputFile . '.min.css.gz<br>';
+                    $this->SuccessMessage .= Text::sprintf('PLG_SYSTEM_SCSSCOMPILER_MSG_TRASH', $outputFile . '.min.css.gz');
                 }
             } else {
                 // Delete files isn config is set to 0
                 if (file_exists($outputFile . '.min.css')) {
                     unlink($outputFile . '.min.css');
-                    $this->SuccessMessage .= '🗑' . $outputFile . '.min.css<br>';
+                    $this->SuccessMessage .= Text::sprintf('PLG_SYSTEM_SCSSCOMPILER_MSG_TRASH', $outputFile . '.min.css');
                 }
 
                 // Delete files isn config is set to 0
                 if (file_exists($outputFile . '.min.css.map')) {
                     unlink($outputFile . '.min.css.map');
-                    $this->SuccessMessage .= '🗑' . $outputFile . '.min.css.map<br>';
+                    $this->SuccessMessage .= Text::sprintf('PLG_SYSTEM_SCSSCOMPILER_MSG_TRASH', $outputFile . '.min.css.map');
                 }
 
                 // Delete files isn config is set to 0
                 if (file_exists($outputFile . '.min.css.gz')) {
                     unlink($outputFile . '.min.css.gz');
-                    $this->SuccessMessage .= '🗑' . $outputFile . '.min.css.gz<br>';
+                    $this->SuccessMessage .= Text::sprintf('PLG_SYSTEM_SCSSCOMPILER_MSG_TRASH', $outputFile . '.min.css.gz');
                 }
             }
         }
@@ -265,7 +271,7 @@ final class Scsscompiler extends CMSPlugin
         if ($this->SuccessMessage && $this->params->get('showmodal', 1)) {
             $messageContainer = '
             <div
-                class="modal fade"
+                class="modal fade text-dark"
                 id="successModal" tabindex="-1"
                 aria-labelledby="successModalLabel"
                 aria-hidden="true"
@@ -320,7 +326,7 @@ final class Scsscompiler extends CMSPlugin
             $path_parts = pathinfo($inputFile);
 
             // Get the path to the output folder
-            $outputDir = JPATH_ROOT . '/' . $outputDir . '/';
+            $outputDir = JPATH_ROOT . '/' . $outputDir;
 
             $compiler->setImportPaths($path_parts['dirname']);
 
@@ -359,25 +365,21 @@ final class Scsscompiler extends CMSPlugin
 
             file_put_contents($outputDir . '/' . $path_parts['filename'] . $extension, $result->getCss());
 
-            $textMsg = Text::_('PLG_SYSTEM_SCSSCOMPILER_MSG');
-
-            $this->SuccessMessage .= $textMsg . $outputDir . '/' . $path_parts['filename'] . $extension . '<br>';
+            $this->SuccessMessage .= Text::sprintf('PLG_SYSTEM_SCSSCOMPILER_MSG', $outputDir . '/' . $path_parts['filename'] . $extension);
 
             if ($sourceMap) {
                 file_put_contents($outputDir . '/'
                     . $path_parts['filename'] . $extension . '.map', $result->getSourceMap());
-                $this->SuccessMessage .= $textMsg . $outputDir
-                    . '/' . $path_parts['filename'] . $extension . '.map<br>';
+                $this->SuccessMessage .= Text::sprintf('PLG_SYSTEM_SCSSCOMPILER_MSG', $outputDir . '/' . $path_parts['filename'] . $extension . '.map');
             }
 
             if ($gzip) {
                 $gzipFile =  $this->gzcompressfile($outputDir . '/' . $path_parts['filename'] . $extension, $level = 9);
 
-                $this->SuccessMessage .= $textMsg . $gzipFile . '<br>';
+                $this->SuccessMessage .= Text::sprintf('PLG_SYSTEM_SCSSCOMPILER_MSG', $gzipFile);
             }
         } catch (\Exception $e) {
-            $this->SuccessMessage .= Text::_('PLG_SYSTEM_SCSSCOMPILER_MSG_ERROR')
-                . '<strong>' . $inputFile . '</strong>' . ' (' . $e->getMessage() . ')<br>';
+            $this->SuccessMessage .= Text::sprintf('PLG_SYSTEM_SCSSCOMPILER_MSG_ERROR', $inputFile . '(' . $e->getMessage() . ')');
         }
 
         return true;
