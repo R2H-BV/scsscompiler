@@ -31,6 +31,18 @@
         <fields name="params">
             <fieldset name="basic">
                 <field
+                    name="showbutton"
+                    type="radio"
+                    class="btn-group"
+                    default="1"
+                    layout="joomla.form.field.radio.switcher"
+                    label="PLG_SYSTEM_SCSSCOMPILER_SHOWBUTTON"
+                    description="PLG_SYSTEM_SCSSCOMPILER_SHOWBUTTON_DESC"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field
                     name="minified"
                     type="radio"
                     class="btn-group"

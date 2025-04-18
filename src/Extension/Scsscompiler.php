@@ -59,60 +59,61 @@ final class Scsscompiler extends CMSPlugin
             return;
         }
 
-        /* INLINE CSS */
         /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
         $wa = $this->app->getDocument()->getWebAssetManager();
 
-        $script = <<<SCRIPT
-        document.addEventListener("DOMContentLoaded", function() {
-            (function() {
-                // Create the button element
-                const button = document.createElement('button');
+        if ($this->params->get('showbutton', 1)) {
+            $script = <<<SCRIPT
+            document.addEventListener("DOMContentLoaded", function() {
+                (function() {
+                    // Create the button element
+                    const button = document.createElement('button');
 
-                // Style the button to be in the top-right corner
-                button.style.position = 'fixed';
-                button.style.top = '10px';
-                button.style.right = '10px';
-                button.style.zIndex = '9999';
-                button.style.padding = '5px 10px';
-                button.style.backgroundColor = '#000';
-                button.style.color = '#fff';
-                button.style.border = 'none';
-                button.style.borderRadius = '4px';
-                button.style.cursor = 'pointer';
-                button.style.fontSize = '12px';
+                    // Style the button to be in the top-right corner
+                    button.style.position = 'fixed';
+                    button.style.top = '10px';
+                    button.style.right = '10px';
+                    button.style.zIndex = '9999';
+                    button.style.padding = '5px 10px';
+                    button.style.backgroundColor = '#000';
+                    button.style.color = '#fff';
+                    button.style.border = 'none';
+                    button.style.borderRadius = '4px';
+                    button.style.cursor = 'pointer';
+                    button.style.fontSize = '12px';
 
-                // Create a URL object from the current location
-                const url = new URL(window.location.href);
-                const params = url.searchParams;
+                    // Create a URL object from the current location
+                    const url = new URL(window.location.href);
+                    const params = url.searchParams;
 
-                // Determine if compile is currently on
-                const isCompileOn = params.get('compile') === '1';
+                    // Determine if compile is currently on
+                    const isCompileOn = params.get('compile') === '1';
 
-                // Set the initial button text based on the compile parameter
-                button.innerHTML = isCompileOn ? 'Stop SCSS compiler' : 'Run SCSS compiler';
+                    // Set the initial button text based on the compile parameter
+                    button.innerHTML = isCompileOn ? 'Stop SCSS compiler' : 'Run SCSS compiler';
 
-                // Add click event to toggle compile parameter and reload the page
-                button.addEventListener('click', function() {
-                    if (params.get('compile') === '1') {
-                        // Remove the compile parameter if it exists
-                        params.delete('compile');
-                    } else {
-                        // Otherwise, add compile=1
-                        params.set('compile', '1');
-                    }
-                    // Update the URL's search string and reload the page with the new URL
-                    url.search = params.toString();
-                    window.location.href = url.toString();
-                });
+                    // Add click event to toggle compile parameter and reload the page
+                    button.addEventListener('click', function() {
+                        if (params.get('compile') === '1') {
+                            // Remove the compile parameter if it exists
+                            params.delete('compile');
+                        } else {
+                            // Otherwise, add compile=1
+                            params.set('compile', '1');
+                        }
+                        // Update the URL's search string and reload the page with the new URL
+                        url.search = params.toString();
+                        window.location.href = url.toString();
+                    });
 
-                // Append the button to the body
-                document.body.appendChild(button);
-            })();
-        });
-        SCRIPT;
+                    // Append the button to the body
+                    document.body.appendChild(button);
+                })();
+            });
+            SCRIPT;
 
-        $wa->addInlineScript($script, ['name' => 'scssloader']);
+            $wa->addInlineScript($script, ['name' => 'scssBtnLoader']);
+        }
 
         // Check for GET parameter
         $input = $this->app->input;
